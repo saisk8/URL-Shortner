@@ -1,0 +1,43 @@
+{
+  "name": "url-shortner",
+  "version": "1.0.0",
+  "description": "A service to shorten the urls",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somanath08/URL-Shortner.git"
+  },
+  "keywords": [
+    "url",
+    "shortner",
+    "freecodecamp",
+    "backend"
+  ],
+  "author": "Sai Somanath Komanduri",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/somanath08/URL-Shortner/issues"
+  },
+  "homepage": "https://github.com/somanath08/URL-Shortner#readme",
+  "dependencies": {
+    "atob": "^2.1.1",
+    "body-parser": "^1.18.3",
+    "btoa": "^1.2.1",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "mongodb": "^3.1.0-beta4",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.8.2"
+  }
+}
