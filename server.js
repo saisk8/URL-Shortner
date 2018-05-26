@@ -6,8 +6,6 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.set('views', './views');
-app.set('view engine', 'pug');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
   extends: true,
@@ -17,9 +15,13 @@ mongo.connect(process.env.CONNECT_STRING, (error, client) => {
   if (error) throw error;
   const urlsDB = client.db('freecodecamp-services').collection('urls');
   const counterDB = client.db('freecodecamp-services').collection('counter');
-});
-app.get('/', (req, res) => {
-  res.render('index');
+  console.log('Database connected'); //eslint-disable-line
 });
 
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/views/index.html`);
+});
+app.get('/short', (request, response) => {
+  response.send('Yay, It works');
+});
 app.listen(process.env.PORT || 3000);
