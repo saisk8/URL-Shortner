@@ -24,12 +24,11 @@
   },
   "homepage": "https://github.com/somanath08/URL-Shortner#readme",
   "dependencies": {
-    "atob": "^2.1.1",
     "body-parser": "^1.18.3",
-    "btoa": "^1.2.1",
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
-    "mongodb": "^3.1.0-beta4"
+    "mongodb": "^3.1.0-beta4",
+    "shortid": "^2.2.8"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",
