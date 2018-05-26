@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>URL Shortner</title>
+    <meta name="description" content="A URL shortner made for freecodecamp">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- import the webpage's stylesheet -->
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <header>
+      <h1>
+        URL Shortner
+      </h1>
+    </header>
+
+    <main>
+      <p class="bold">This is a simple node app for creating short URLs</p>
+
+      <form>
+        <input name="url" type="text" maxlength="100" placeholder="URL" aria-labelledby="submit-URL">
+        <button type="submit" id="submit-url">Submit URL</button>
+      </form>
+
+      <div>
+        <h3>
+          An example for you:
+        </h3>
+        <p>
+          You request as follows: <code>https://bird-work.glitch.me/short/https://www.google.com/</code>
+        </p>
+        <p>
+          You will get a shortened url as follows: <code>Placeholder URL</code>
+        </p>
+      </div>
+    </main>
+    <!-- import the webpage's client-side javascript file -->
+    <script src="/client.js"></script>
+
+  </body>
+</html>
