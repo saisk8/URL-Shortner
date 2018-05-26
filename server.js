@@ -1,15 +1,19 @@
 const express = require('express');
 const mongo = require('mongodb').MongoClient;
-const btoa = require('btoa');
-const atob = require('atob');
 const bodyParser = require('body-parser');
+const shortid = require('shortid');
 
+shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$&');
 const app = express();
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
   extends: true,
 }));
+
+app.get('/', (req, res) => {
+  res.sendFile(`${__dirname}/views/index.html`);
+});
 
 mongo.connect(process.env.CONNECT_STRING, (error, client) => {
   if (error) throw error;
@@ -18,9 +22,6 @@ mongo.connect(process.env.CONNECT_STRING, (error, client) => {
   console.log('Database connected'); //eslint-disable-line
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
-});
 app.get('/short', (request, response) => {
   response.send('Yay, It works');
 });
