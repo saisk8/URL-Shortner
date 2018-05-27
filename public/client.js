@@ -11,4 +11,4 @@ $(document).ready(() => {
       $.post(`${process.env.HOST}error`);
     }
   });
-})
+});
