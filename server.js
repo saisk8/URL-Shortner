@@ -15,7 +15,7 @@ app.get('/', (request, response) => {
   response.sendFile(`${__dirname}/views/index.html`);
 });
 
-app.get('/short/:url(*)', (request, response) => {
+app.post('/short/:url(*)', (request, response) => {
   mongo.connect(process.env.CONNECT_STRING, (error, client) => {
     if (error) throw error;
     const urlsDB = client.db('freecodecamp-services').collection('urls');
@@ -51,5 +51,34 @@ app.get('/short/:url(*)', (request, response) => {
   });
 });
 
+app.get('/error', (request, response) => {
+  response.sendFile(`${__dirname}/views/error.html`);
+});
+
+app.get('/:short', (request, response) => {
+  mongo.client(process.env.CONNECT_STRING, (error, client) => {
+    if (error) throw error;
+    const urlsDB = client.db('freecodecamp-services').collection('urls');
+    console.log('Database connected'); //eslint-disable-line
+    const {
+      short,
+    } = request.params;
+    urlsDB.findOne({
+      short,
+    }, {
+      url: 1,
+      _id: 0,
+    }, (err, doc) => {
+      if (doc != null) {
+        response.redirect(doc.url);
+      } else {
+        response.json({
+          error: 'Short link not found',
+        });
+      }
+    });
+    client.close();
+  });
+});
 
 app.listen(process.env.PORT || 3000);
