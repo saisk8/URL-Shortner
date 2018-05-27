@@ -11,18 +11,45 @@ app.use(bodyParser.urlencoded({
   extends: true,
 }));
 
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
+app.get('/', (request, response) => {
+  response.sendFile(`${__dirname}/views/index.html`);
 });
 
-mongo.connect(process.env.CONNECT_STRING, (error, client) => {
-  if (error) throw error;
-  const urlsDB = client.db('freecodecamp-services').collection('urls');
-  const counterDB = client.db('freecodecamp-services').collection('counter');
-  console.log('Database connected'); //eslint-disable-line
+app.get('/short/:url(*)', (request, response) => {
+  mongo.connect(process.env.CONNECT_STRING, (error, client) => {
+    if (error) throw error;
+    const urlsDB = client.db('freecodecamp-services').collection('urls');
+    console.log('Database connected'); //eslint-disable-line
+    const {
+      url,
+    } = request.params;
+    urlsDB.findOne({
+      url,
+    }, {
+      short: 1,
+      _id: 0,
+    }, (err, doc) => {
+      if (doc != null) {
+        response.json({
+          original_url: url,
+          short_url: process.env.HOST + doc.short,
+        });
+      } else {
+        const short = shortid.generate();
+        const newDocument = {
+          url,
+          short,
+        };
+        urlsDB.insert([newDocument]);
+        response.json({
+          original_url: url,
+          short_url: process.env.HOST + short,
+        });
+      }
+    });
+    client.close();
+  });
 });
 
-app.get('/short', (request, response) => {
-  response.send('Yay, It works');
-});
+
 app.listen(process.env.PORT || 3000);
