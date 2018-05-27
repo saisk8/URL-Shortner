@@ -2,6 +2,7 @@ const express = require('express');
 const mongo = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const shortid = require('shortid');
+require('dotenv').config();
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$&');
 const app = express();
