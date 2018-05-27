@@ -15,7 +15,7 @@ app.get('/', (request, response) => {
   response.sendFile(`${__dirname}/views/index.html`);
 });
 
-app.post('/short/:url(*)', (request, response) => {
+app.get('/short/:url(*)', (request, response) => {
   mongo.connect(process.env.CONNECT_STRING, (error, client) => {
     if (error) throw error;
     const urlsDB = client.db('freecodecamp-services').collection('urls');
@@ -40,14 +40,19 @@ app.post('/short/:url(*)', (request, response) => {
           url,
           short,
         };
-        urlsDB.insert([newDocument]);
+        urlsDB.insert([newDocument], (errorInsert) => {
+          if (errorInsert) {
+            console.log('Insertion error'); //eslint-disable-line
+          } else {
+            client.close();
+          }
+        });
         response.json({
           original_url: url,
           short_url: process.env.HOST + short,
         });
       }
     });
-    client.close();
   });
 });
 
@@ -56,7 +61,7 @@ app.get('/error', (request, response) => {
 });
 
 app.get('/:short', (request, response) => {
-  mongo.client(process.env.CONNECT_STRING, (error, client) => {
+  mongo.connect(process.env.CONNECT_STRING, (error, client) => {
     if (error) throw error;
     const urlsDB = client.db('freecodecamp-services').collection('urls');
     console.log('Database connected'); //eslint-disable-line
