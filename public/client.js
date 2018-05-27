@@ -6,9 +6,9 @@ function checkURL(url) {
 $(document).ready(() => {
   $('#submit-url').on('click', () => {
     if (checkURL($('#url').val())) {
-      $.post(process.env.HOST + $('#url').val());
+      $.get(process.env.HOST + $('#url').val());
     } else {
-      $.post(`${process.env.HOST}error`);
+      $.get(`${process.env.HOST}error`);
     }
   });
 });
