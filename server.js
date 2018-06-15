@@ -2,7 +2,6 @@ const express = require('express');
 const mongo = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
 const shortid = require('shortid');
-require('dotenv').config();
 
 shortid.characters('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$&');
 const app = express();
@@ -14,9 +13,7 @@ function checkURL(url) {
 
 
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({
-  extends: true,
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (request, response) => {
   response.sendFile(`${__dirname}/views/index.html`);
@@ -27,46 +24,28 @@ app.get('/short/:url(*)', (request, response) => {
     if (error) throw error;
     const urlsDB = client.db('freecodecamp-services').collection('urls');
     console.log('Database connected'); //eslint-disable-line
-    const {
-      url,
-    } = request.params;
-    urlsDB.findOne({
-      url,
-    }, {
-      short: 1,
-      _id: 0,
-    }, (err, doc) => {
+    const { url } = request.params;
+    urlsDB.findOne({ url }, { short: 1, _id: 0 }, (err, doc) => {
       if (doc != null) {
-        response.json({
-          original_url: url,
-          short_url: process.env.HOST + doc.short,
-        });
-      } else if (checkURL(url)) {
+        // console.log('Found one');
+        return response.json({ original_url: url, short_url: process.env.HOST + doc.short });
+      }
+
+      if (checkURL(url)) {
         const short = shortid.generate();
-        const newDocument = {
-          url,
-          short,
-        };
+        const newDocument = { url, short };
         urlsDB.insert([newDocument], (errorInsert) => {
           if (errorInsert) {
-            console.log('Insertion error'); //eslint-disable-line
-          } else {
-            client.close();
+            throw new Error(`Insertion error: ${errorInsert}`); //eslint-disable-line
           }
+          client.close();
         });
-        response.json({
-          original_url: url,
-          short_url: process.env.HOST + short,
-        });
-      } else {
-        response.sendFile(`${__dirname}/views/error.html`);
+        return response.json({ original_url: url, short_url: process.env.HOST + short });
       }
+
+      return response.json({ error: 'Invalid Url' });
     });
   });
-});
-
-app.get('/error', (request, response) => {
-  response.sendFile(`${__dirname}/views/error.html`);
 });
 
 app.get('/:short', (request, response) => {
@@ -74,40 +53,21 @@ app.get('/:short', (request, response) => {
     if (error) throw error;
     const urlsDB = client.db('freecodecamp-services').collection('urls');
     console.log('Database connected'); //eslint-disable-line
-    const {
-      short,
-    } = request.params;
-    urlsDB.findOne({
-      short,
-    }, {
-      url: 1,
-      _id: 0,
-    }, (err, doc) => {
+    const { short } = request.params;
+    urlsDB.findOne({ short }, { url: 1, _id: 0 }, (err, doc) => {
       if (doc != null) {
-        response.redirect(doc.url);
-      } else {
-        response.json({
-          error: 'Short link not found',
-        });
+        return response.redirect(doc.url);
       }
+      return response.json({ error: 'Short link not found' });
     });
     client.close();
   });
 });
 
 // Respond not found to all the wrong routes
-app.use((req, res) => {
-  res.status(404);
-  res.type('txt').send('Not found');
-});
+app.use((req, res) => res.status(404).type('txt').send('Not found'));
 
 // Error Middleware
-app.use((err, req, res) => {
-  if (err) {
-    res.status(err.status || 500)
-      .type('txt')
-      .send(err.message || 'SERVER ERROR');
-  }
-});
+app.use((err, req, res) => err && res.status(err.status || 500).type('txt').send(err.message || 'SERVER ERROR'));
 
 app.listen(process.env.PORT || 3000);
